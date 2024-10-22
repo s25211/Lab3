@@ -69,7 +69,7 @@ data['score'] = pd.qcut(data['score'], q=4, labels=False)
 exp_clf = setup(data, target='score', session_id=123, normalize=True, verbose=False)
 
 # Compare models with additional metrics
-best_models = compare_models(n_select=4, sort='Accuracy')
+best_models = compare_models(n_select=4, sort='Accuracy', exclude=['lightgbm'])
 results = pull()
 
 # Select the best model based on Accuracy
