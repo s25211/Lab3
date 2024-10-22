@@ -1,0 +1,6 @@
+pandas
+pycaret
+matplotlib
+seaborn
+reportlab
+scikit-learn

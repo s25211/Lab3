@@ -1,0 +1,43 @@
+name: Generate PDF Report
+
+# Trigger workflow on push to main branch and on manual trigger
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Krok 1: Checkout kodu źródłowego
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Krok 2: Ustawienie środowiska Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  # Możesz zmienić wersję Python w razie potrzeby
+
+      # Krok 3: Instalacja zależności
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas pycaret matplotlib seaborn reportlab scikit-learn
+
+          # Jeśli masz plik requirements.txt, użyj poniższej komendy zamiast powyższej
+          # pip install -r requirements.txt
+
+      # Krok 4: Uruchomienie skryptu Python
+      - name: Run Python script
+        run: |
+          python main.py
+
+      # Krok 5: Upload artefaktu (Readme.pdf)
+      - name: Upload PDF Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: Readme-PDF
+          path: Readme.pdf
