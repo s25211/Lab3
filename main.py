@@ -26,6 +26,7 @@ def remove_polish_characters(text):
 
 data = pd.read_csv("CollegeDistance.csv")
 
+
 # Step 1: Data Exploration
 # Check for missing values
 missing_values = data.isnull().sum()
