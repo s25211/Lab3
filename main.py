@@ -23,6 +23,7 @@ def remove_polish_characters(text):
 
 
 # Load data
+
 data = pd.read_csv("CollegeDistance.csv")
 
 # Step 1: Data Exploration
@@ -88,7 +89,9 @@ for metric in metrics:
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(f'model_{metric_filename}_comparison.png')
-    plt.close()
+    plt.close()  
+
+    
 
 # Check if the best model is LinearDiscriminantAnalysis
 is_lda = best_model_name == 'LinearDiscriminantAnalysis'
