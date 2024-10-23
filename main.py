@@ -63,13 +63,13 @@ for col in categorical_columns:
     plt.close()
 
 # Step 3: Data Preparation and Model Training
-data['score'] = pd.qcut(data['score'], q=10, labels=False)
+data['score'] = pd.qcut(data['score'], q=4, labels=False)
 
 # Normalize data and set up PyCaret
 exp_clf = setup(data, target='score', session_id=123, normalize=True, verbose=False)
 
 # Compare models with additional metrics
-best_models = compare_models(n_select=10, sort='Accuracy', exclude=['lightgbm'])
+best_models = compare_models(n_select=4, sort='Accuracy', exclude=['lightgbm'])
 results = pull()
 
 # Select the best model based on Accuracy
@@ -96,6 +96,39 @@ for metric in metrics:
 
 # Check if the best model is LinearDiscriminantAnalysis
 is_lda = best_model_name == 'LinearDiscriminantAnalysis'
+
+# If the best model is LinearDiscriminantAnalysis, analyze the 'shrinkage' parameter
+if is_lda:
+    # Retrieve transformed data from PyCaret
+    X = get_config('X_transformed')
+    y = get_config('y_transformed')
+
+    # List of 'shrinkage' parameter values to test
+    shrinkage_values = [None, 'auto', 0.0, 0.1, 0.2, 0.5, 0.7, 1.0]
+    shrinkage_results = []
+
+    for shrinkage in shrinkage_values:
+        # Initialize LinearDiscriminantAnalysis with specified 'shrinkage' and solver 'lsqr'
+        lda = LinearDiscriminantAnalysis(solver='lsqr', shrinkage=shrinkage)
+        # Perform cross-validation
+        cv_results = cross_validate(lda, X, y, cv=5, scoring='accuracy')
+        mean_accuracy = cv_results['test_score'].mean()
+        shrinkage_results.append((str(shrinkage), mean_accuracy))
+
+    # Plot Accuracy vs. 'shrinkage' value
+    shrinkages, accuracies = zip(*shrinkage_results)
+    plt.figure(figsize=(8, 6))
+    plt.plot(shrinkages, accuracies, marker='o')
+    plt.title('Zmiana Accuracy w zaleznosci od wartosci parametru shrinkage')
+    plt.xlabel('Wartosc parametru shrinkage')
+    plt.ylabel('Srednia Accuracy')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig('shrinkage_accuracy.png')
+    plt.close()
+else:
+    print(
+        f"Najlepszy model to {best_model_name}, który nie jest LinearDiscriminantAnalysis. Analiza parametru 'shrinkage' nie została przeprowadzona.")
 
 # Step 4: Generate PDF Documentation using ReportLab
 
