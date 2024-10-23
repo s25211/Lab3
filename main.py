@@ -63,7 +63,7 @@ for col in categorical_columns:
     plt.close()
 
 # Step 3: Data Preparation and Model Training
-data['score'] = pd.qcut(data['score'], q=10, labels=True)
+data['score'] = pd.qcut(data['score'], q=10, labels=False)
 
 # Normalize data and set up PyCaret
 exp_clf = setup(data, target='score', session_id=123, normalize=True, verbose=False)
